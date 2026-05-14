@@ -59,7 +59,7 @@ router.post('/', async (req, res) => {
 // DELETE /api/comments/:id
 router.delete('/:id', async (req, res) => {
   try {
-    const { rowCount } = await pool.query('DELETE FROM comments WHERE id = $1', [req.params.id]);
+    const { rowCount } = await pool.query('DELETE FROM comments WHERE id = $1 AND patient_id = $2', [req.params.id, req.patientId]);
     if (rowCount === 0) {
       return res.status(404).json({ error: 'Comment not found' });
     }

@@ -15,6 +15,7 @@ import {
   IconChevronRight,
   IconHistory,
   IconShieldLock,
+  IconLogout,
 } from '@tabler/icons-react';
 import { PageContainer } from '@/shared/layout/PageContainer';
 import { PatientCard } from '@/features/dashboard/components/PatientCard';
@@ -23,6 +24,7 @@ import { qk } from '@/shared/api/keys';
 import { fetchVersion } from './api';
 import { haptic } from '@/shared/lib/haptic';
 import { getSession } from '@/shared/auth/session';
+import { useAuth } from '@/shared/auth/AuthContext';
 import { useIsDesktop } from '@/shared/hooks/useMediaQuery';
 
 /**
@@ -59,6 +61,7 @@ export function MorePage() {
   const navigate = useNavigate();
   const location = useLocation();
   const isDesktop = useIsDesktop();
+  const { logout } = useAuth();
   const { data: dashboard } = useDashboard();
   const { data: version } = useQuery({ queryKey: qk.version, queryFn: fetchVersion, retry: false });
 
@@ -125,6 +128,28 @@ export function MorePage() {
             </button>
           );
         })}
+      </div>
+
+      <div className="list-group" style={{ marginTop: 16 }}>
+        <button
+          type="button"
+          className="list-item"
+          onClick={() => { haptic('light'); void logout(); }}
+          style={{
+            width: '100%',
+            background: 'var(--card)',
+            border: 'none',
+            fontFamily: 'inherit',
+            cursor: 'pointer',
+            WebkitTapHighlightColor: 'transparent',
+            textAlign: 'left',
+          }}
+        >
+          <div className="list-item-icon" style={{ background: 'var(--red)' }}>
+            <IconLogout size={16} style={{ color: '#fff' }} />
+          </div>
+          <span className="list-item-text" style={{ color: 'var(--red)' }}>Выйти</span>
+        </button>
       </div>
 
       {version && (

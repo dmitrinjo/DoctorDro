@@ -562,7 +562,7 @@ router.get('/backups', (req, res) => {
 
     const hot = fs.existsSync(backupDir)
       ? fs.readdirSync(backupDir)
-          .filter(f => f.startsWith('danil-') && f.endsWith('.db'))
+          .filter(f => f.endsWith('.db'))
           .map(f => {
             const full = path.join(backupDir, f);
             const stat = fs.statSync(full);
@@ -577,7 +577,7 @@ router.get('/backups', (req, res) => {
 
     const archives = fs.existsSync(archiveDir)
       ? fs.readdirSync(archiveDir)
-          .filter(f => f.startsWith('danil-full-'))
+          .filter(f => f.endsWith('.tar.gz') || f.endsWith('.tar.gz.enc'))
           .map(f => {
             const full = path.join(archiveDir, f);
             const stat = fs.statSync(full);

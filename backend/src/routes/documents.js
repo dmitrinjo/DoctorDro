@@ -92,7 +92,7 @@ router.get('/', async (req, res) => {
 // GET /api/documents/:id
 router.get('/:id', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1', [req.params.id]);
+    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1 AND patient_id = $2', [req.params.id, req.patientId]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Документ не найден' });
     }
@@ -106,7 +106,7 @@ router.get('/:id', async (req, res) => {
 // GET /api/documents/:id/previews — PDF page previews as images
 router.get('/:id/previews', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1', [req.params.id]);
+    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1 AND patient_id = $2', [req.params.id, req.patientId]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Документ не найден' });
     }
@@ -122,7 +122,7 @@ router.get('/:id/previews', async (req, res) => {
 // GET /api/documents/:id/file — download file
 router.get('/:id/file', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1', [req.params.id]);
+    const { rows } = await pool.query('SELECT * FROM documents WHERE id = $1 AND patient_id = $2', [req.params.id, req.patientId]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Документ не найден' });
     }
@@ -191,9 +191,9 @@ router.put('/:id', async (req, res) => {
     const { rows } = await pool.query(
       `UPDATE documents
        SET title = $1, category = $2, notes = $3, updated_at = NOW()
-       WHERE id = $4
+       WHERE id = $4 AND patient_id = $5
        RETURNING *`,
-      [title, category, notes, req.params.id]
+      [title, category, notes, req.params.id, req.patientId]
     );
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Документ не найден' });
@@ -208,7 +208,7 @@ router.put('/:id', async (req, res) => {
 // DELETE /api/documents/:id
 router.delete('/:id', async (req, res) => {
   try {
-    const { rows } = await pool.query('DELETE FROM documents WHERE id = $1 RETURNING file_path', [req.params.id]);
+    const { rows } = await pool.query('DELETE FROM documents WHERE id = $1 AND patient_id = $2 RETURNING file_path', [req.params.id, req.patientId]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Документ не найден' });
     }

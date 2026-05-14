@@ -93,6 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const logout = useCallback(async () => {
+    // Отзываем сессию на сервере пока токен ещё в памяти
+    try {
+      await api.post(EP.authLogout);
+    } catch {
+      // Игнорируем — если сервер недоступен, всё равно чистим локальное состояние
+    }
     clearSession();
     setSession(getSession());
     setStatus('unauthenticated');
